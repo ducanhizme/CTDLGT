@@ -1,6 +1,9 @@
 #include <iostream>
 #include <ctime>
+#include <fstream>
+#include <string.h>
 
+#define TXT_TYPE_FILE ".txt"
 using namespace std;
 struct DATE {
     int day;
@@ -56,6 +59,62 @@ void insertLast(DLIST &DL, DNODE *p) {
     }
 }
 
+void writeProductToFile(DLIST list) {
+    char *fileName = nullptr;
+    cout << "Input file name to save: ";
+    cin >> fileName;
+    strcat(fileName, TXT_TYPE_FILE);
+    FILE *f;
+    f = fopen(fileName, "ab");
+    DNODE *p = list.head;
+    PRODUCT product;
+    if (p == NULL) {
+        cout << "Empty data" << endl;
+    } else {
+        if (f == NULL) {
+            cout << "Can't open file" << endl;
+            exit(1);
+        } else {
+            while (p != NULL) {
+                product = p->data;
+                fwrite(&product, sizeof(product), 1, f);
+                p = p->next;
+            }
+        }
+    }
+}
+
+void readProductFromFile(DLIST list) {
+    char *fileName = nullptr;
+    FILE *f;
+    cout << "Input file name to read: ";
+    cin >> fileName;
+    strcat(fileName, TXT_TYPE_FILE);
+    DNODE *p;
+    PRODUCT product;
+    f = fopen(fileName, "rb");
+    int n = 0;
+    if (f == NULL) {
+        cout << "\nMo file bi loi!";
+    } else {
+        p = list.head;
+        while (fread(&product, sizeof(product), 1, f) == 1) {
+
+            p = new DNODE;
+            p->data = product;
+            if (list.head == NULL) {
+                list.head = p;
+                list.tail = list.head;
+                p->next = NULL;
+            } else {
+                p->next = head;
+                list.head = p;
+            }
+        }
+        fclose(f);
+    }
+}
+
 DATE inputDate() {
     DATE date;
     cout << "Input day: ";
@@ -69,7 +128,7 @@ DATE inputDate() {
 }
 
 void showDate(DATE date) {
-    cout << date.day << "/" << date.month << "/" << date.year;
+    cout << date.day << "/" << date.month << "/" << date.year << endl;
 }
 
 PRODUCT inputProduct() {
@@ -91,7 +150,7 @@ PRODUCT inputProduct() {
     product.exp = inputDate();
     cout << "Input import date: " << endl;
     product.importDate = inputDate();
-    cout << "===================================";
+    cout << "===================================" << endl;
     return product;
 }
 
@@ -144,6 +203,8 @@ void adminMenu() {
     cout << "|[11].Show cheapest product        |" << endl;
     cout << "|[12].Show most expensive product  |" << endl;
     cout << "|[13].Remove product by ID         |" << endl;
+    cout << "|[14].Save to file                 |" << endl;
+    cout << "|[14].Read from file               |" << endl;
     cout << "|[0].EXIT ADMIN                    |" << endl;
     cout << "====================================\n" << endl;
 }
@@ -304,14 +365,14 @@ double maxPrice(DLIST list) {
 
 DNODE *searchById(DLIST list) {
     string idSearch;
-    cout <<"Input ID for searching: "<<endl;
-    getline(cin,idSearch);
+    cout << "Input ID for searching: " << endl;
+    getline(cin, idSearch);
     DNODE *p;
     p = list.head;
-    while( p!= NULL ){
-        if(p->data.id == idSearch)
+    while (p != NULL) {
+        if (p->data.id == idSearch)
             break;
-        p=p->next;
+        p = p->next;
     }
     return p;
 }
@@ -319,23 +380,24 @@ DNODE *searchById(DLIST list) {
 void removeByID(DLIST list) {
     DNODE *p;
     p = searchById(list);
-    if(p==NULL){
-        cout <<"Can't remove by id . Something went wrong!!"<<endl;
+    if (p == NULL) {
+        cout << "Can't remove by id . Something went wrong!!" << endl;
         return;
-    }else{
-        if((p=list.head)&&(p =list.tail)){
+    } else {
+        if ((p = list.head) && (p = list.tail)) {
             list.head = NULL;
             list.tail = NULL;
-        }else if(p == list.tail){
+        } else if (p == list.tail) {
             p->prev->next = NULL;
             list.tail = p->prev;
-        }else{
+        } else {
             p->prev->next = p->next;
             p->next->prev = p->prev;
         }
-        delete(p);
+        delete (p);
     }
 }
+
 
 void admin() {
     DLIST list;
@@ -387,6 +449,11 @@ void admin() {
                 break;
             case 13:
                 removeByID(list);
+            case 14:
+                writeProductToFile(list);
+                break;
+            case 15:
+                readProductFromFile(list);
             default:
                 cout << "Something went wrong!!" << endl;
         }
