@@ -28,27 +28,65 @@ struct d_node {
     struct d_node *next;
     struct d_node *prev;
 };
-typedef d_node DNODE;
+typedef d_node DNODE_PRODUCT;
 
 struct d_list {
-    DNODE *head;
-    DNODE *tail;
+    DNODE_PRODUCT *head;
+    DNODE_PRODUCT *tail;
 };
-typedef d_list DLIST;
+typedef d_list DLIST_PRODUCT;
 
-void initList(DLIST &DL) {
+
+typedef d_list DLIST_PRODUCT;
+struct bill {
+    string id;
+    DATE date;
+    string productName;
+    double price;
+    int amount;
+    double totalMoney;
+};
+typedef bill BILL;
+
+struct d_node_bill {
+    BILL data;
+    struct d_node_bill *next;
+    struct d_node_bill *prev;
+};
+typedef d_node_bill DNODE_BILL;
+
+struct d_list_bill {
+    DNODE_BILL *head;
+    DNODE_BILL *tail;
+};
+typedef d_list_bill DLIST_BILL;
+
+
+void initListProduct(DLIST_PRODUCT &DL) {
     DL.head = DL.tail = NULL;
 }
 
-DNODE *initNode(PRODUCT x) {
-    DNODE *p = new DNODE;
+void initListBill(DLIST_BILL &DL) {
+    DL.head = DL.tail = NULL;
+}
+
+DNODE_PRODUCT *initNodeProduct(PRODUCT x) {
+    DNODE_PRODUCT *p = new DNODE_PRODUCT;
     p->data = x;
     p->next = NULL;
     p->prev = NULL;
     return p;
 }
 
-void insertLast(DLIST &DL, DNODE *p) {
+DNODE_BILL *initNodeBill(BILL x) {
+    DNODE_BILL *p = new DNODE_BILL;
+    p->data = x;
+    p->next = NULL;
+    p->prev = NULL;
+    return p;
+}
+
+void insertLastProduct(DLIST_PRODUCT &DL, DNODE_PRODUCT *p) {
     if (DL.head == NULL) {
         DL.head = p;
         DL.tail = DL.head;
@@ -59,55 +97,49 @@ void insertLast(DLIST &DL, DNODE *p) {
     }
 }
 
-void writeProductToFile(DLIST list) {
-    char *fileName = nullptr;
-    cout << "Input file name to save: ";
-    cin >> fileName;
-    strcat(fileName, TXT_TYPE_FILE);
+void writeProductToFile(DLIST_PRODUCT list) {
+    DNODE_PRODUCT *x;
+    PRODUCT dt;
     FILE *f;
-    f = fopen(fileName, "ab");
-    DNODE *p = list.head;
-    PRODUCT product;
-    if (p == NULL) {
-        cout << "Empty data" << endl;
+    f = fopen("test5.dat", "ab");
+    x = list.head;
+    if (x == NULL) {
+        cout << "\nDanh sach chua co gia tri, nhap truoc khi luu file!";
+    }
+    if (f == NULL) {
+        cout << "\nLoi khi mo tep";
+        exit(1);
     } else {
-        if (f == NULL) {
-            cout << "Can't open file" << endl;
-            exit(1);
-        } else {
-            while (p != NULL) {
-                product = p->data;
-                fwrite(&product, sizeof(product), 1, f);
-                p = p->next;
-            }
+        while (x != NULL) {
+            dt = x->data;
+            fwrite(&dt, sizeof(dt), 1, f);
+            x = x->next;
         }
+
+        fclose(f);
+//        cout<<"\nDa luu vao file!"<<fileName;
     }
 }
 
-void readProductFromFile(DLIST list) {
-    char *fileName = nullptr;
+void readProductFromFile(DLIST_PRODUCT list) {
     FILE *f;
-    cout << "Input file name to read: ";
-    cin >> fileName;
-    strcat(fileName, TXT_TYPE_FILE);
-    DNODE *p;
-    PRODUCT product;
-    f = fopen(fileName, "rb");
+    DNODE_PRODUCT *p;
+    PRODUCT dt;
+    f = fopen("test5.dat", "rb");
     int n = 0;
     if (f == NULL) {
         cout << "\nMo file bi loi!";
     } else {
         p = list.head;
-        while (fread(&product, sizeof(product), 1, f) == 1) {
-
-            p = new DNODE;
-            p->data = product;
+        while (fread(&dt, sizeof(dt), 1, f) == 1) {
+            p = new DNODE_PRODUCT;
+            p->data = dt;
             if (list.head == NULL) {
                 list.head = p;
                 list.tail = list.head;
                 p->next = NULL;
             } else {
-                p->next = head;
+                p->next = list.head;
                 list.head = p;
             }
         }
@@ -154,14 +186,14 @@ PRODUCT inputProduct() {
     return product;
 }
 
-void inputListProduct(DLIST &dlist) {
+void inputListProduct(DLIST_PRODUCT &dlist) {
     cout << "Input number of products: ";
     int n;
     cin >> n;
     for (int i = 0; i < n; i++) {
-        DNODE *p;
-        p = initNode(inputProduct());
-        insertLast(dlist, p);
+        DNODE_PRODUCT *p;
+        p = initNodeProduct(inputProduct());
+        insertLastProduct(dlist, p);
     }
 }
 
@@ -178,8 +210,8 @@ void showAProduct(PRODUCT product) {
 }
 
 
-void showListProduct(DLIST DL) {
-    DNODE *p;
+void showListProduct(DLIST_PRODUCT DL) {
+    DNODE_PRODUCT *p;
     p = DL.head;
     while (p != NULL) {
         showAProduct(p->data);
@@ -209,11 +241,11 @@ void adminMenu() {
     cout << "====================================\n" << endl;
 }
 
-void editProductById(DLIST DL) {
+void editProductById(DLIST_PRODUCT DL) {
     string idSearch;
     cout << "Input ID product to edit: ";
     getline(cin, idSearch);
-    DNODE *p;
+    DNODE_PRODUCT *p;
     p = DL.head;
     while (p != NULL) {
         if (p->data.id == idSearch)
@@ -223,11 +255,11 @@ void editProductById(DLIST DL) {
 }
 
 
-void findProductById(DLIST DL) {
+void findProductById(DLIST_PRODUCT DL) {
     string idSearch;
     cout << "Input ID product to edit: ";
     getline(cin, idSearch);
-    DNODE *p;
+    DNODE_PRODUCT *p;
     p = DL.head;
     while (p != NULL) {
         if (p->data.id == idSearch)
@@ -236,11 +268,11 @@ void findProductById(DLIST DL) {
     }
 }
 
-void findProductByCategory(DLIST DL) {
+void findProductByCategory(DLIST_PRODUCT DL) {
     string categorySearch;
     cout << "Input category product to edit: ";
     getline(cin, categorySearch);
-    DNODE *p;
+    DNODE_PRODUCT *p;
     p = DL.head;
     while (p != NULL) {
         if (p->data.id == categorySearch)
@@ -249,9 +281,9 @@ void findProductByCategory(DLIST DL) {
     }
 }
 
-double totalMoneyProduct(DLIST list) {
+double totalMoneyProduct(DLIST_PRODUCT list) {
     double sumMoney = 0;
-    DNODE *p;
+    DNODE_PRODUCT *p;
     p = list.head;
     while (p != NULL) {
         sumMoney += p->data.price;
@@ -261,9 +293,9 @@ double totalMoneyProduct(DLIST list) {
 }
 
 
-int totalAmountProduct(DLIST list) {
+int totalAmountProduct(DLIST_PRODUCT list) {
     int sumAmount = 0;
-    DNODE *p;
+    DNODE_PRODUCT *p;
     p = list.head;
     while (p != NULL) {
         sumAmount += p->data.amount;
@@ -283,10 +315,10 @@ bool cmpName(string s1, string s2) {
     return s1 > s2;
 }
 
-void sortByName(DLIST list) {
+void sortByName(DLIST_PRODUCT list) {
     cout << "Sorted ===================================" << endl;
-    DNODE *p = list.head;
-    DNODE *q = p->next;
+    DNODE_PRODUCT *p = list.head;
+    DNODE_PRODUCT *q = p->next;
     while (p != NULL) {
         q = p->next;
         while (q != NULL) {
@@ -299,10 +331,10 @@ void sortByName(DLIST list) {
 }
 
 
-void sortByPrice(DLIST list) {
+void sortByPrice(DLIST_PRODUCT list) {
     cout << "Sorted ===================================" << endl;
-    DNODE *p = list.head;
-    DNODE *q = p->next;
+    DNODE_PRODUCT *p = list.head;
+    DNODE_PRODUCT *q = p->next;
     while (p != NULL) {
         q = p->next;
         while (q != NULL) {
@@ -331,8 +363,8 @@ bool isOutDate(DATE date) {
         return date.year > now->tm_year + 1900;
 }
 
-void outDateProduct(DLIST list) {
-    DNODE *p;
+void outDateProduct(DLIST_PRODUCT list) {
+    DNODE_PRODUCT *p;
     p = list.head;
     while (p != NULL) {
         if (isOutDate(p->data.exp))
@@ -341,8 +373,8 @@ void outDateProduct(DLIST list) {
     }
 }
 
-double minPrice(DLIST list) {
-    DNODE *p;
+double minPrice(DLIST_PRODUCT list) {
+    DNODE_PRODUCT *p;
     p = list.head;
     double min = p->data.price;
     while (p != NULL) {
@@ -352,8 +384,8 @@ double minPrice(DLIST list) {
     return min;
 }
 
-double maxPrice(DLIST list) {
-    DNODE *p;
+double maxPrice(DLIST_PRODUCT list) {
+    DNODE_PRODUCT *p;
     p = list.head;
     double max = p->data.price;
     while (p != NULL) {
@@ -363,11 +395,11 @@ double maxPrice(DLIST list) {
     return max;
 }
 
-DNODE *searchById(DLIST list) {
+DNODE_PRODUCT *searchById(DLIST_PRODUCT list) {
     string idSearch;
     cout << "Input ID for searching: " << endl;
     getline(cin, idSearch);
-    DNODE *p;
+    DNODE_PRODUCT *p;
     p = list.head;
     while (p != NULL) {
         if (p->data.id == idSearch)
@@ -377,8 +409,8 @@ DNODE *searchById(DLIST list) {
     return p;
 }
 
-void removeByID(DLIST list) {
-    DNODE *p;
+void removeByID(DLIST_PRODUCT list) {
+    DNODE_PRODUCT *p;
     p = searchById(list);
     if (p == NULL) {
         cout << "Can't remove by id . Something went wrong!!" << endl;
@@ -400,8 +432,8 @@ void removeByID(DLIST list) {
 
 
 void admin() {
-    DLIST list;
-    initList(list);
+    DLIST_PRODUCT list;
+    initListProduct(list);
     int choice;
     adminMenu();
     while (true) {
@@ -454,6 +486,7 @@ void admin() {
                 break;
             case 15:
                 readProductFromFile(list);
+                break;
             default:
                 cout << "Something went wrong!!" << endl;
         }
