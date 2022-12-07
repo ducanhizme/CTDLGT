@@ -1,7 +1,6 @@
 #include <iostream>
 #include <ctime>
-#include <fstream>
-#include <string.h>
+#include <cstring>
 
 #define TXT_TYPE_FILE ".txt"
 using namespace std;
@@ -97,55 +96,7 @@ void insertLastProduct(DLIST_PRODUCT &DL, DNODE_PRODUCT *p) {
     }
 }
 
-void writeProductToFile(DLIST_PRODUCT list) {
-    DNODE_PRODUCT *x;
-    PRODUCT dt;
-    FILE *f;
-    f = fopen("test5.dat", "ab");
-    x = list.head;
-    if (x == NULL) {
-        cout << "\nDanh sach chua co gia tri, nhap truoc khi luu file!";
-    }
-    if (f == NULL) {
-        cout << "\nLoi khi mo tep";
-        exit(1);
-    } else {
-        while (x != NULL) {
-            dt = x->data;
-            fwrite(&dt, sizeof(dt), 1, f);
-            x = x->next;
-        }
 
-        fclose(f);
-//        cout<<"\nDa luu vao file!"<<fileName;
-    }
-}
-
-void readProductFromFile(DLIST_PRODUCT list) {
-    FILE *f;
-    DNODE_PRODUCT *p;
-    PRODUCT dt;
-    f = fopen("test5.dat", "rb");
-    int n = 0;
-    if (f == NULL) {
-        cout << "\nMo file bi loi!";
-    } else {
-        p = list.head;
-        while (fread(&dt, sizeof(dt), 1, f) == 1) {
-            p = new DNODE_PRODUCT;
-            p->data = dt;
-            if (list.head == NULL) {
-                list.head = p;
-                list.tail = list.head;
-                p->next = NULL;
-            } else {
-                p->next = list.head;
-                list.head = p;
-            }
-        }
-        fclose(f);
-    }
-}
 
 DATE inputDate() {
     DATE date;
@@ -160,7 +111,7 @@ DATE inputDate() {
 }
 
 void showDate(DATE date) {
-    cout << date.day << "/" << date.month << "/" << date.year << endl;
+    cout << date.day << "/" << date.month << "/" << date.year;
 }
 
 PRODUCT inputProduct() {
@@ -236,7 +187,7 @@ void adminMenu() {
     cout << "|[12].Show most expensive product  |" << endl;
     cout << "|[13].Remove product by ID         |" << endl;
     cout << "|[14].Save to file                 |" << endl;
-    cout << "|[14].Read from file               |" << endl;
+    cout << "|[15].Read from file               |" << endl;
     cout << "|[0].EXIT ADMIN                    |" << endl;
     cout << "====================================\n" << endl;
 }
@@ -244,6 +195,7 @@ void adminMenu() {
 void editProductById(DLIST_PRODUCT DL) {
     string idSearch;
     cout << "Input ID product to edit: ";
+    cin.ignore();
     getline(cin, idSearch);
     DNODE_PRODUCT *p;
     p = DL.head;
@@ -254,10 +206,10 @@ void editProductById(DLIST_PRODUCT DL) {
     }
 }
 
-
 void findProductById(DLIST_PRODUCT DL) {
     string idSearch;
     cout << "Input ID product to edit: ";
+    cin.ignore();
     getline(cin, idSearch);
     DNODE_PRODUCT *p;
     p = DL.head;
@@ -271,6 +223,7 @@ void findProductById(DLIST_PRODUCT DL) {
 void findProductByCategory(DLIST_PRODUCT DL) {
     string categorySearch;
     cout << "Input category product to edit: ";
+    cin.ignore();
     getline(cin, categorySearch);
     DNODE_PRODUCT *p;
     p = DL.head;
@@ -291,7 +244,6 @@ double totalMoneyProduct(DLIST_PRODUCT list) {
     }
     return sumMoney;
 }
-
 
 int totalAmountProduct(DLIST_PRODUCT list) {
     int sumAmount = 0;
@@ -430,6 +382,48 @@ void removeByID(DLIST_PRODUCT list) {
     }
 }
 
+void writeProductToFile(DLIST_PRODUCT list) {
+    char fileName[20];
+    cout<<"Input file name to save product: ";
+    gets(fileName);
+    FILE *f;
+    f = fopen(fileName,"wb");
+    int n =0;
+    DNODE_PRODUCT *p;
+    for(p = list.head; p != NULL; p = p ->next){
+        n++;
+    }
+    fwrite(&n,sizeof(int),1,f);
+    for(p = list.head;p!=NULL; p = p ->next){
+        fwrite(&p->data,sizeof (PRODUCT), 1 ,f);
+    }
+    fclose(f);
+    cout<<"Complete"<<endl;
+}
+
+DLIST_PRODUCT readProductFromFile(DLIST_PRODUCT &list) {
+    DLIST_PRODUCT newList;
+    initListProduct(newList);
+    FILE *f;
+    PRODUCT dt;
+    DNODE_PRODUCT *p;
+    int n;
+    char fileName[20];
+    cout<<"Input file name to read file: "<<endl;
+    gets(fileName);
+    f = fopen(fileName, "rb");
+    fread(&n,sizeof (int),1,f);
+    cout << n;
+    if(list.head == NULL){
+        for(int i =0 ; i < n ; i++){
+            fread(&dt, sizeof(PRODUCT),1,f);
+            p = initNodeProduct(dt);
+            insertLastProduct(newList,p);
+        }
+    }
+    fclose(f);
+    return newList;
+}
 
 void admin() {
     DLIST_PRODUCT list;
@@ -440,7 +434,6 @@ void admin() {
         cout << endl;
         cout << "Input your selection: ";
         cin >> choice;
-        cin.ignore();
         cout << endl;
         switch (choice) {
             case 1:
@@ -485,7 +478,7 @@ void admin() {
                 writeProductToFile(list);
                 break;
             case 15:
-                readProductFromFile(list);
+                showListProduct(readProductFromFile(list));
                 break;
             default:
                 cout << "Something went wrong!!" << endl;
@@ -496,26 +489,286 @@ void admin() {
     }
 }
 
-int roleMenu() {
-    int selectionRole;
+void roleMenu() {
     cout << "YOUR ROLE======================================" << endl;
-    cout << "| [1].Admin  | [2].Shop Assistants | [x] EXIT |" << endl;
+    cout << "| [1].Admin  | [2].Shop Assistants | [0] EXIT |" << endl;
     cout << "===============================================" << endl;
-    cout << "Your selection:";
-    cin >> selectionRole;
-    if (selectionRole == 1) {
-        return 1;
-    } else if (selectionRole == 2) {
-        return 2;
+}
+
+void salePersonMenu() {
+    cout << "=============== SHOP ASSISTANTS ================" << endl;
+    cout << "| [1].Input bill                               |" << endl;
+    cout << "| [2].Show bill                                |" << endl;
+    cout << "| [3].Edit bill                                |" << endl;
+    cout << "| [4].Find bill by id                          |" << endl;
+    cout << "| [5].Total of bill money                      |" << endl;
+    cout << "| [6].Total quantity of products sold          |" << endl;
+    cout << "| [7].Sort bill by price                       |" << endl;
+    cout << "| [8].Show most expensive bill                 |" << endl;
+    cout << "| [9].Count bill have price                    |" << endl;
+    cout << "| [10].Delete bill                             |" << endl;
+    cout << "| [11].Save to file                            |" << endl;
+    cout << "| [12].Read file                               |" << endl;
+    cout << "| [0].EXIT                                     |" << endl;
+    cout << "================================================" << endl;
+}
+
+void insertLastBill(DLIST_BILL &list, DNODE_BILL *p) {
+    if (list.head == NULL) {
+        list.head = p;
+        list.tail = list.head;
     } else {
-        return 0;
+        list.tail->next = p;
+        p->prev = list.tail;
+        list.tail = p;
+    }
+}
+
+BILL inputBill() {
+    BILL bill;
+    cin.ignore();
+    cout << "INPUT BILL ========================" << endl;
+    cout << "Input id: ";
+    getline(cin, bill.id);
+    cin.ignore();
+    cout << "Input date: \n";
+    bill.date = inputDate();
+    cout << "Input name of product: ";
+    getline(cin, bill.productName);
+    cin.ignore();
+    cout << "Input price: ";
+    cin >> bill.price;
+    cout << "Input amount of products: ";
+    cin >> bill.amount;
+    cout << "===========================" << endl;
+    bill.totalMoney = bill.price * bill.amount;
+    return bill;
+}
+
+void inputListBill(DLIST_BILL &list) {
+    int n;
+    cout << "Input number of bill: ";
+    cin >> n;
+    for (int i = 0; i < n; i++) {
+        DNODE_BILL *p;
+        p = initNodeBill(inputBill());
+        insertLastBill(list, p);
+    }
+}
+
+void showABill(BILL bill) {
+    showDate(bill.date);
+    cout << " ==========================" << endl;
+    cout << "ID bill: " << bill.id << endl;
+    cout << "Name of product: " << bill.productName << endl;
+    cout << "Price of product: " << bill.price << endl;
+    cout << "Amount of product: " << bill.amount << endl;
+    cout << "Total money: " << bill.totalMoney << endl;
+    cout << "===================================" << endl;
+}
+
+void showListBill(DLIST_BILL listBill) {
+    DNODE_BILL *p;
+    p = listBill.head;
+    while (p != NULL) {
+        showABill(p->data);
+        p = p->next;
+    }
+}
+
+
+void editBillById(DLIST_BILL listBill) {
+    string id;
+    cin.ignore();
+    cout << " Input ID to edit: ";
+    getline(cin, id);
+    DNODE_BILL *p;
+    p = listBill.head;
+    while (p != NULL) {
+        if (p->data.id == id)
+            p->data = inputBill();
+        p = p->next;
+    }
+}
+
+
+void findBillById(DLIST_BILL listBILL) {
+    string id;
+    cin.ignore();
+    cout << " Input ID to edit: ";
+    getline(cin, id);
+    DNODE_BILL *p;
+    p = listBILL.head;
+    while (p != NULL) {
+        if (p->data.id == id)
+            showABill(p->data);
+        p = p->next;
+    }
+}
+
+void totalMoneyBill(DLIST_BILL listBill) {
+    double sum = 0;
+    DNODE_BILL *p;
+    p = listBill.head;
+    while (p != NULL) {
+        sum += p->data.totalMoney;
+        p = p->next;
+    }
+    cout <<"Total Money Bill : "<<sum;
+}
+
+void totalAmountProductSold(DLIST_BILL listBill) {
+    double sum = 0;
+    DNODE_BILL *p;
+    p = listBill.head;
+    while (p != NULL) {
+        sum += p->data.amount;
+        p = p->next;
+    }
+    cout <<"Amount of products sold : "<<sum;
+}
+
+
+void swapBill(BILL bill1, BILL bill2) {
+    BILL temp;
+    temp = bill1;
+    bill1 = bill2;
+    bill2 = temp;
+}
+
+void sortBillByTotalMoney(DLIST_BILL listBill) {
+    cout << "Sorted ===================================" << endl;
+    DNODE_BILL *p = listBill.head;
+    DNODE_BILL *q = p->next;
+    while (p != NULL) {
+        q = p->next;
+        while (q != NULL) {
+            if (p->data.totalMoney > q->data.totalMoney)
+                swapBill(p->data, q->data);
+            q = q->next;
+        }
+        p = p->next;
+    }
+}
+
+double showMostExpensiveBill(DLIST_BILL listBill) {
+    DNODE_BILL *p;
+    p = listBill.head;
+    double max = p->data.totalMoney;
+    while (p != NULL) {
+        if (max < p->data.totalMoney) max = p->data.totalMoney;
+        p = p->next;
+    }
+    return max;
+}
+
+void countBillByID(DLIST_BILL listBill) {
+    cout << "Input id to count: ";
+    string id;
+    getline(cin, id);
+    DNODE_BILL *p;
+    p = listBill.head;
+    int count = 0;
+    while (p != NULL) {
+        if (p->data.id == id) count++;
+    }
+    cout << "BILL ID " << id << ": " << count;
+}
+
+DNODE_BILL *searchByIdProduct(DLIST_BILL listBill) {
+    string idSearch;
+    cout << "Input ID for searching: " << endl;
+    getline(cin, idSearch);
+    DNODE_BILL *p;
+    p = listBill.head;
+    while (p != NULL) {
+        if (p->data.id == idSearch)
+            break;
+        p = p->next;
+    }
+    return p;
+}
+
+void removeBillById(DLIST_BILL listBill) {
+    DNODE_BILL *p;
+    p = searchByIdProduct(listBill);
+    if (p == NULL) {
+        cout << "Can't remove by id . Something went wrong!!" << endl;
+        return;
+    } else {
+        if ((p = listBill.head) && (p = listBill.tail)) {
+            listBill.head = NULL;
+            listBill.tail = NULL;
+        } else if (p == listBill.tail) {
+            p->prev->next = NULL;
+            listBill.tail = p->prev;
+        } else {
+            p->prev->next = p->next;
+            p->next->prev = p->prev;
+        }
+        delete (p);
+    }
+}
+void salePerson() {
+    DLIST_BILL listBILL;
+    initListBill(listBILL);
+    salePersonMenu();
+    int choice;
+    while (true) {
+        cout << "Input your choice: ";
+        cin >> choice;
+        switch (choice) {
+            case 1:
+                inputListBill(listBILL);
+                break;
+            case 2:
+                showListBill(listBILL);
+                break;
+            case 3:
+                editBillById(listBILL);
+                break;
+            case 4:
+                findBillById(listBILL);
+                break;
+            case 5:
+                totalMoneyBill(listBILL);
+                break;
+            case 6:
+                totalAmountProductSold(listBILL);
+                break;
+            case 7:
+                sortBillByTotalMoney(listBILL);
+                break;
+            case 8:
+                cout << "Most expensive bill value: " << showMostExpensiveBill(listBILL);
+                break;
+            case 9:
+                countBillByID(listBILL);
+                break;
+            case 10:
+                removeBillById(listBILL);
+                break;
+        }
+        if (choice == 0) break;
     }
 }
 
 int main() {
-    if (roleMenu() == 1) {
-        admin();
+    int selection;
+    while (true) {
+        roleMenu();
+        cout << "Input your role: ";
+        cin >> selection;
+        switch (selection) {
+            case 1:
+                admin();
+                break;
+            case 2:
+                salePerson();
+                break;
+            default:
+                cout << "Something went wrong !!! " << endl;
+        }
+        if (selection == 0) break;
     }
-    return 0;
 }
-

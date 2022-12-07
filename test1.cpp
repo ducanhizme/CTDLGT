@@ -139,18 +139,53 @@ void showOutDateProduct(LIST list){
         p = p -> pNext;
     }
 }
+void writeProductToFile(LIST list) {
+    char fileName[20];
+    cout<<"Input file name to save product: ";
+    gets(fileName);
+    FILE *f;
+    f = fopen(fileName,"wb");
+    int n =0;
+    NODE *p;
+    for(p = list.pHead; p != NULL; p = p ->pNext){
+        n++;
+    }
+    fwrite(&n,sizeof(int),1,f);
+    for(p = list.pHead;p!=NULL; p = p ->pNext){
+        fwrite(&p->data,sizeof (SAN_PHAM), 1 ,f);
+    }
+    fclose(f);
+    cout<<"Complete"<<endl;
+}
+void readProductFromFile(LIST &list) {
+    FILE *f;
+    SAN_PHAM dt;
+    NODE *p;
+    int n;
+    char fileName[20];
+    cout<<"Input file name to read file: "<<endl;
+    gets(fileName);
+    cout<<fileName;
+    f = fopen(fileName, "rb");
+    fread(&n,sizeof (int),1,f);
+    cout << n;
+    if(list.pHead == NULL){
+        for(int i =0 ; i < n ; i++){
+            fread(&dt, sizeof(SAN_PHAM),1,f);
+            p = initNode(dt);
+            insertLast(list,p);
+        }
+    }
+    fclose(f);
+}
+
 int main() {
     LIST list;
     initList(list);
     cout <<"================================Nhap thong tin san pham ========================================"<<endl;
-    inputListProduct(list);
-    showListProduct(list);
-    cout<<"===========================Dem so luong san pham co nam san xuat k =============================="<<endl;
-    countProduct(list);
-    cout <<"===============================Danh sach sau khi sap xep========================================"<<endl;
-    sort(list);
-    showListProduct(list);
-    cout <<"==============================Nhung san pham da het han========================================="<< endl;
-    showOutDateProduct(list);
+//    inputListProduct(list);
+    readProductFromFile(list);
+//    showListProduct(list);
+//    writeProductToFile(list);
     return 0;
 }
