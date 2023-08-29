@@ -302,6 +302,4 @@ int main() {
     } while (choice != 12);
     return 0;
 }
-// đọc teẹp hiện ra sinh vien lon hon 8
-// luu vao file la hs gioi
-// ghi danh sach sau khi xep vao tep ket qua
+
