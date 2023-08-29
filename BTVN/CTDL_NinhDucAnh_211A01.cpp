@@ -179,8 +179,6 @@ void writeStudentsExcellent(SinhVien list[], int n) {
 }
 
 FILE *openFile(int action) {
-    // action = 1 -> READ
-    // action = 0  -> WRITE
     char fileName[20];
     cout << "Input file name to save product: ";
     cin >> fileName;
