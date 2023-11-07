@@ -3,4 +3,5 @@ project(21A100100025_BTL_CTDL_NinhDucAnh)
 
 set(CMAKE_CXX_STANDARD 14)
 
-add_executable(21A100100025_BTL_CTDL_NinhDucAnh main.cpp)
+add_executable(21A100100025_BTL_CTDL_NinhDucAnh
+        21A100100025_NinhDucAnh_BTL_CTDL.cpp)

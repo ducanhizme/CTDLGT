@@ -1,3 +1,3 @@
-D:/21A100100025_BTL_CTDL_NinhDucAnh/CTDLGT/cmake-build-debug/CMakeFiles/21A100100025_BTL_CTDL_NinhDucAnh.dir
-D:/21A100100025_BTL_CTDL_NinhDucAnh/CTDLGT/cmake-build-debug/CMakeFiles/edit_cache.dir
-D:/21A100100025_BTL_CTDL_NinhDucAnh/CTDLGT/cmake-build-debug/CMakeFiles/rebuild_cache.dir
+/home/ddanh/Copy/CTDLGT/cmake-build-debug/CMakeFiles/21A100100025_BTL_CTDL_NinhDucAnh.dir
+/home/ddanh/Copy/CTDLGT/cmake-build-debug/CMakeFiles/edit_cache.dir
+/home/ddanh/Copy/CTDLGT/cmake-build-debug/CMakeFiles/rebuild_cache.dir
