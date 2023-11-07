@@ -20,9 +20,9 @@ string inputDate() {
     cin >> year;
     bool validDate = (day < 31 && month < 12 && year > 0);
     if (validDate){
-        formattedDate = std::to_string(day) + "/" +
-                        std::setw(2) << std::setfill('0') << std::to_string(month) << "/" <<
-                        std::setw(4) << std::setfill('0') << std::to_string(year);
+        formattedDate = to_string(day) + "/" +
+                        setw(2) << setfill('0') << to_string(month) << "/" <<
+                        setw(4) << setfill('0') << to_string(year);
         return formattedDate;
     }
 }
@@ -109,7 +109,7 @@ CustomerList readCustomersFromTextFile(const char *fileName) {
     FILE *f = fopen(fileName, "r");
     if (f == nullptr) {
         cerr << "Error: Unable to open file for reading." << endl;
-        return list; // Return an empty list in case of an error
+        return list; 
     }
     int n;
     if (fscanf(f, "%d", &n) != 1) {
@@ -304,7 +304,7 @@ CarList readCarsFromTextFile(const char *fileName) {
     FILE *f = fopen(fileName, "r");
     if (f == nullptr) {
         cerr << "Error: Unable to open file for reading." << endl;
-        return list; // Return an empty list in case of an error
+        return list;
     }
     int n;
     if (fscanf(f, "%d", &n) != 1) {
@@ -315,9 +315,9 @@ CarList readCarsFromTextFile(const char *fileName) {
     for (int i = 0; i < n; i++) {
         Car data;
         char nameCarStr[100];
-        char statusStr[20]; // Assuming the status string won't exceed 20 characters
+        char statusStr[20];
         if (fscanf(f, "%s %d %d %f %s", nameCarStr, &data.capacityFuel, &data.mfgDate, &data.price, statusStr) == 5) {
-            data.nameCar = nameCarStr; // Convert the C-style string to a std::string
+            data.nameCar = nameCarStr;
             data.status = (strcmp(statusStr, "Rented") == 0);
             CarNode *p = createCarNode(data);
             addCar(list, p);
@@ -512,7 +512,7 @@ RentedCarList readRentedCars(const char* fileName, CarList carList, CustomerList
     FILE* f = fopen(fileName, "r");
     if (f == nullptr) {
         cerr << "Error: Unable to open file for reading." << endl;
-        return list; // Return an empty list in case of an error
+        return list;
     }
 
     int n;
