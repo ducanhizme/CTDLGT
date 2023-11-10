@@ -551,6 +551,7 @@ RentedCarList readRentedCars(const char *fileName, CarList carList, CustomerList
     RentedCarList list;
     initRentedCarList(list);
 
+
     FILE *f = fopen(fileName, "r");
     if (f == nullptr) {
         cerr << "Error: Unable to open file for reading." << endl;
