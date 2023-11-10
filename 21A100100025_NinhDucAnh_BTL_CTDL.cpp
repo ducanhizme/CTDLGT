@@ -6,7 +6,6 @@
 #define NOT_FOUND_CODE 404
 
 using namespace std;
-
 //================== Utils =============================
 string inputDate() {
     string formattedDate;
