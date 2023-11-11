@@ -3,9 +3,12 @@
 #include "cstring"
 
 #define CARS_DATA_STORAGE "cars.txt"
+#define CUSTOMER_DATA_STORAGE "customers.txt"
+#define CONTRACT_DATA_STORAGE "rented_car.txt"
 #define NOT_FOUND_CODE 404
 
 using namespace std;
+
 //================== Utils =============================
 string inputDate() {
     string formattedDate;
@@ -75,6 +78,27 @@ void addCustomer(CustomerList &list, CustomerNode *p) {
     }
 }
 
+void deleteCustomer(CustomerList &list, CustomerNode* node) {
+    if (node == list.head) {
+        list.head = node->next;
+        if (list.head != nullptr) {
+            list.head->prev = nullptr;
+        }
+        delete node;
+        return;
+    }
+
+    if (node->next == nullptr) {
+        node->prev->next = nullptr;
+        delete node;
+        return;
+    }
+
+    node->prev->next = node->next;
+    node->next->prev = node->prev;
+    delete node;
+}
+
 int customerListSize(CustomerNode *head) {
     int count = 0;
     CustomerNode *current = head;
@@ -112,18 +136,12 @@ CustomerList readCustomersFromTextFile(const char *fileName) {
     FILE *f;
     CustomerList list{};
     initCustomerList(list);
-    try {
         f = fopen(fileName, "r");
         if (f == nullptr) {
-            throw runtime_error("Unable to open file for reading.");
+            return list;
         }
-    }catch (const exception &exception){
-        cerr << "Error: " << exception.what() << endl;
-        return list;
-    }
     int n;
     if (fscanf(f, "%d", &n) != 1) {
-        cerr << "Error: Failed to read the number of customers." << endl;
         fclose(f);
         return list;
     }
@@ -139,7 +157,7 @@ CustomerList readCustomersFromTextFile(const char *fileName) {
             CustomerNode *p = createCustomerNode(data);
             addCustomer(list, p);
         } else {
-            cerr << "Error: Failed to read customer data." << endl;
+
         }
     }
     fclose(f);
@@ -205,26 +223,6 @@ void showCustomer(Customer customer) {
 }
 
 void showCustomers(CustomerList list) {
-    if (isCustomerListEmpty(list)) {
-        char choice;
-        cout << "Khong co danh sach khach hang nao ban co muon import du lieu khong (Y/N): ";
-        cin >> choice;
-        do {
-            if (choice == 'Y' || choice == 'y') {
-                cin.ignore();
-                cout<<"Nhap file de import: (0.EXIT)";
-                string fileName;
-                getline(cin,fileName);
-                if(fileName=="0"){
-                    break;
-                }
-                list = readCustomersFromTextFile(fileName.c_str());
-            }else{
-                cout<<"Sai cu phap !!"<<endl;
-                break;
-            }
-        } while (choice != 'N');
-    }
     showCustomerTittleTable();
     CustomerNode *p;
     p = list.head;
@@ -232,6 +230,11 @@ void showCustomers(CustomerList list) {
         showCustomer(p->data);
         p = p->next;
     }
+}
+
+void showCustomers(string fileName) {
+    CustomerList list = readCustomersFromTextFile(fileName.c_str());
+    showCustomers(list);
 }
 
 Customer findCustomerByID(CustomerList list, int id) {
@@ -295,6 +298,27 @@ void addCar(CarList &list, CarNode *p) {
     }
 }
 
+void deleteCar(CarList &list, CarNode* node) {
+    if (node == list.head) {
+        list.head = node->next;
+        if (list.head != nullptr) {
+            list.head->prev = nullptr;
+        }
+        delete node;
+        return;
+    }
+
+    if (node->next == nullptr) {
+        node->prev->next = nullptr;
+        delete node;
+        return;
+    }
+
+    node->prev->next = node->next;
+    node->next->prev = node->prev;
+    delete node;
+}
+
 int carListSize(CarNode *head) {
     int count = 0;
     CarNode *current = head;
@@ -339,15 +363,12 @@ void saveCars(CarList list, const char *fileName) {
 CarList readCarsFromTextFile(const char *fileName) {
     CarList list;
     initCarList(list);
-
     FILE *f = fopen(fileName, "r");
     if (f == nullptr) {
-//        cerr << "Error: Unable to open file for reading." << endl;
         return list;
     }
     int n;
     if (fscanf(f, "%d", &n) != 1) {
-        cerr << "Error: Failed to read the number of cars." << endl;
         fclose(f);
         return list;
     }
@@ -406,7 +427,7 @@ void showCar(Car car) {
     cout << setw(10) << car.id << " | "
          << left << setw(15) << car.nameCar << " | "
          << setw(10) << car.mfgDate << " | "
-         << setw(10) << car.capacityFuel << " | "
+         << setw(11) << car.capacityFuel << " | "
          << setw(10) << car.price << " | "
          << status << endl;
 }
@@ -419,6 +440,11 @@ void showCars(CarList list) {
         showCar(p->data);
         p = p->next;
     }
+}
+
+void showCars(string fileName) {
+    CarList list = readCarsFromTextFile(fileName.c_str());
+    showCars(list);
 }
 
 //Input and save into new file
@@ -438,11 +464,25 @@ void inputCars(CarList &list) {
     saveCars(list, fileName);
 }
 
-//Input and save into an existing file
 void inputCars(string fileName) {
     CarList list = readCarsFromTextFile(fileName.c_str());
-    inputCars(list);
+    cout << "Input number of car: ";
+    int n;
+    cin >> n;
+    cin.ignore();
+    for (int i = 0; i < n; i++) {
+        CarNode *p;
+        p = createCarNode(inputCar());
+        addCar(list, p);
+    }
+    saveCars(list, fileName.c_str());
 }
+
+//Input and save into an existing file
+//void inputCars(string fileName) {
+//    CarList list = readCarsFromTextFile(fileName.c_str());
+//    inputCars(list);
+//}
 
 Car findCarByID(CarList list, int id) {
     CarNode *current = list.head;
@@ -453,6 +493,20 @@ Car findCarByID(CarList list, int id) {
         current = current->next;
     }
     return Car{NOT_FOUND_CODE, "", 0, 0, false};
+}
+
+CarList findUnrentedCar( const string& fileName,bool status){
+    CarList listTemp{};
+    initCarList(listTemp);
+    CarList list = readCarsFromTextFile(fileName.c_str());
+    CarNode *current = list.head;
+    while (current != nullptr) {
+        if (current->data.status==status) {
+            addCar(listTemp, createCarNode(current->data));
+        }
+        current = current->next;
+    }
+    return listTemp;
 }
 
 void updateStatusCar(CarList list, bool status, int id, const char *fileName) {
@@ -511,6 +565,27 @@ void addRentedCar(RentedCarList &list, RentedCarNode *p) {
     }
 }
 
+void deleteRentedCar(RentedCarList &list, RentedCarNode* node) {
+    if (node == list.head) {
+        list.head = node->next;
+        if (list.head != nullptr) {
+            list.head->prev = nullptr;
+        }
+        delete node;
+        return;
+    }
+
+    if (node->next == nullptr) {
+        node->prev->next = nullptr;
+        delete node;
+        return;
+    }
+
+    node->prev->next = node->next;
+    node->next->prev = node->prev;
+    delete node;
+}
+
 int rentedCarListSize(RentedCarNode *head) {
     int count = 0;
     RentedCarNode *current = head;
@@ -550,17 +625,12 @@ void saveRentedCars(RentedCarList list, const char *fileName) {
 RentedCarList readRentedCars(const char *fileName, CarList carList, CustomerList customerList) {
     RentedCarList list;
     initRentedCarList(list);
-
-
     FILE *f = fopen(fileName, "r");
     if (f == nullptr) {
-        cerr << "Error: Unable to open file for reading." << endl;
-        return list; // Return an empty list in case of an error
+        return list;
     }
-
     int n;
-    if (fscanf(f, "%d", &n) != 0) {
-        cerr << "Error: Failed to read the number of rented cars." << endl;
+    if (fscanf(f, "%d", &n) != 1) {
         fclose(f);
         return list;
     }
@@ -616,37 +686,68 @@ RentedCar inputRentedCar(CarList &carList, CustomerList &customerList, bool save
     int idCar;
     cin >> idCar;
     rentedCar.car = findCarByID(carList, idCar);
-    updateStatusCar(carList, true, idCar, "cars4");
-    cout << "Input customer: ";
+    updateStatusCar(carList, true, idCar, CARS_DATA_STORAGE);
     rentedCar.customer = inputCustomer();
     rentedCar.startDate = inputDate();
     rentedCar.endDate = inputDate();
     if (save) {
         addCustomer(customerList, createCustomerNode(rentedCar.customer));
-        saveCustomersToTextFile(customerList, "customer_input2");
+        saveCustomersToTextFile(customerList, CUSTOMER_DATA_STORAGE);
     }
     return rentedCar;
 }
 
-void inputRentedCars(RentedCarList &list, CarList carList, CustomerList customerList) {
-    cout << "Input file name to store cars data: ";
-    char fileName[20];
-    cin >> fileName;
-    cout << "Input number of car: ";
+void inputRentedCars(RentedCarList &list, CarList carList, CustomerList customerList,string fileName) {
+    cout<<"Input number of rented car: ";
     int n;
-    cin >> n;
-    cin.ignore();
+    cin>>n;
     for (int i = 0; i < n; i++) {
         RentedCarNode *p;
         p = createRentedCarNode(inputRentedCar(carList, customerList, true));
         addRentedCar(list, p);
     }
-    saveRentedCars(list, fileName);
+    saveRentedCars(list, fileName.c_str());
 }
 
-void inputRentedCars(string fileName, CarList carList, CustomerList customerList) {
-    RentedCarList list = readRentedCars(fileName.c_str(), carList, customerList);
-    inputRentedCars(list, carList, customerList);
+void inputRentedCars(const string& fileNameRentedCar, const string& fileNameCar, const string& fileNameCustomer) {
+    CarList carList = readCarsFromTextFile(fileNameCar.c_str());
+    CustomerList customerList = readCustomersFromTextFile(fileNameCustomer.c_str());
+    RentedCarList list = readRentedCars(fileNameRentedCar.c_str(), carList, customerList);
+    inputRentedCars(list, carList, customerList,fileNameRentedCar);
+}
+void showTitleRentedCarTable() {
+    cout << setw(10) << "ID CAR" << " | "
+         << left << setw(10) << "ID CUSTOMER" << " | "
+         << setw(15) << "Start date" << " | "
+         << setw(15) << "End date" << " | "
+         << setw(10) << "Car name" << " | "
+            << setw(10) << "Customer name" << endl;
+}
+
+void showRentedCar(RentedCar rentedCar) {
+    cout << setw(10) << rentedCar.car.id << " | "
+         << left << setw(11) << rentedCar.customer.id << " | "
+         << setw(15) << rentedCar.startDate << " | "
+         << setw(15) << rentedCar.endDate << " | "
+         << setw(10) << rentedCar.car.nameCar << " | "
+            << setw(10) << rentedCar.customer.nameCustomer<< endl;
+}
+
+void showRentedCars(RentedCarList list) {
+    showTitleRentedCarTable();
+    RentedCarNode *p;
+    p = list.head;
+    while (p != nullptr) {
+        showRentedCar(p->data);
+        p = p->next;
+    }
+}
+
+void showRentedCars(const string& fileRentedName, const string& fileCarName, const string& fileCustomerName) {
+    CarList carList = readCarsFromTextFile(fileCarName.c_str());
+    CustomerList customerList = readCustomersFromTextFile(fileCustomerName.c_str());
+    RentedCarList list = readRentedCars(fileRentedName.c_str(),carList,customerList);
+    showRentedCars(list);
 }
 
 void menu() {
@@ -658,7 +759,30 @@ void menu() {
     cout << "5.Hien hop dong cho thue" << endl;
     cout << "6.Them xe cho thue" << endl;
     cout << "7.Them hop dong cho thue" << endl;
+    cout << "8.Xoa hop dong" << endl;
     cout << "0.Exit" << endl;
+}
+
+string handleFileInput() {
+    char choice1;
+    cout << "Khong co danh sach nao ban co muon import du lieu khong (Y/N): "<<endl;
+    cin >> choice1;
+    cin.ignore();
+    do {
+        if (choice1 == 'Y' || choice1 == 'y') {
+            cout << "Nhap file de import danh sach oto: (0.EXIT)";
+            string fileName;
+            getline(cin, fileName);
+            if (fileName == "0") {
+                break;
+            }
+            return fileName;
+        }else{
+            cin.ignore();
+            break;
+        }
+    } while (choice1 != 'N');
+    return "0";
 }
 
 int main() {
@@ -675,72 +799,25 @@ int main() {
         cin >> choice;
         switch (choice) {
             case 1:
-                showCustomers(customerList);
+                showCustomers(CUSTOMER_DATA_STORAGE);
                 break;
             case 2:
-                if (isCarListEmpty(carList)) {
-                    char choice1;
-                    cout << "Khong co danh sach khach xe nao ban co muon import du lieu khong (Y/N): ";
-                    cin >> choice1;
-                    cin.ignore();
-                    do {
-                        if (choice1 == 'Y' || choice1 == 'y') {
-                            cout<<"Nhap file de import danh sach oto: (0.EXIT)";
-                            string fileName;
-                            getline(cin,fileName);
-                            if(fileName=="0"){
-                                break;
-                            }
-                            carList = readCarsFromTextFile(fileName.c_str());
-                            if (isCarListEmpty(carList)){
-                                cout<<"Khong the doc duoc file nay"<<fileName<<endl;
-
-                            }else{
-                                showCars(carList);
-                                break;
-                            }
-                        }else{
-                            showCars(carList);
-                            break;
-                        }
-                    } while (choice1 != 'N');
-                }
+                showCars(CARS_DATA_STORAGE);
                 break;
             case 3:
+                showCars(findUnrentedCar(CARS_DATA_STORAGE, true));
                 break;
             case 4:
+                showCars(findUnrentedCar(CARS_DATA_STORAGE, false));
                 break;
             case 5:
+                showRentedCars(CONTRACT_DATA_STORAGE,CARS_DATA_STORAGE,CUSTOMER_DATA_STORAGE);
                 break;
             case 6:
-                if (isCarListEmpty(carList)) {
-                    char choice1;
-                    cout << "Khong co danh xe nao ban co muon import du lieu khong (Y/N): ";
-                    cin >> choice1;
-                    cin.ignore();
-                    do {
-                        if (choice1 == 'Y' || choice1 == 'y') {
-                            cout<<"Nhap file de import danh sach oto: (0.EXIT)";
-                            string fileName;
-                            getline(cin,fileName);
-                            cin.ignore();
-                            if(fileName=="0"){
-                                break;
-                            }
-                            carList = readCarsFromTextFile(fileName.c_str());
-                            if (isCarListEmpty(carList)){
-                                cout<<"Khong the doc duoc file nay"<<fileName<<endl;
-                            }else{
-                                inputCars(carList);
-                            }
-                        }else{
-                            inputCars(carList);
-                            break;
-                        }
-                    } while (choice1 != 'N');
-                }
+                inputCars(CARS_DATA_STORAGE);
                 break;
             case 7:
+                inputRentedCars(CONTRACT_DATA_STORAGE,CARS_DATA_STORAGE,CUSTOMER_DATA_STORAGE);
                 break;
             case 0:
                 cout << "Exiting the program. Goodbye!" << endl;
@@ -750,7 +827,4 @@ int main() {
         }
     } while (choice != 0);
     return 0;
-
 }
-
-
