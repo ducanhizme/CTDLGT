@@ -178,6 +178,7 @@ CustomerList readCustomersFromTextFile(const char *fileName) {
 
         }
     }
+
     fclose(f);
     cout << "Successfully read " << n << " customers from the file." << endl;
     return list;
