@@ -117,27 +117,6 @@ void addCustomer(CustomerList &list, CustomerNode *p) {
     }
 }
 
-void deleteCustomer(CustomerList &list, CustomerNode *node) {
-    if (node == list.head) {
-        list.head = node->next;
-        if (list.head != nullptr) {
-            list.head->prev = nullptr;
-        }
-        delete node;
-        return;
-    }
-
-    if (node->next == nullptr) {
-        node->prev->next = nullptr;
-        delete node;
-        return;
-    }
-
-    node->prev->next = node->next;
-    node->next->prev = node->prev;
-    delete node;
-}
-
 int customerListSize(CustomerNode *head) {
     int count = 0;
     CustomerNode *current = head;
@@ -466,7 +445,7 @@ void showCar(Car car) {
     cout << setw(10) << car.id << " | "
          << left << setw(15) << car.nameCar << " | "
          << setw(10) << car.mfgDate << " | "
-         << setw(11) << car.capacityFuel << " | "
+         << setw(10) << car.capacityFuel << " | "
          << setw(10) << car.price << " | "
          << status << endl;
 }
@@ -552,7 +531,6 @@ void updateStatusCar(CarList list, bool status, int id, const char *fileName) {
     }
     saveCars(list, fileName);
 }
-
 //============================================================
 //================== RENTED CAR ================================
 
@@ -662,8 +640,10 @@ RentedCarList readRentedCars(const char *fileName, CarList carList, CustomerList
     if (f == nullptr) {
         return list;
     }
+
     int n;
     if (fscanf(f, "%d", &n) != 1) {
+        cerr << "Error: Failed to read the number of rented cars." << endl;
         fclose(f);
         return list;
     }
@@ -692,7 +672,7 @@ RentedCarList readRentedCars(const char *fileName, CarList carList, CustomerList
 
 RentedCar inputRentedCar(CarList carList, CustomerList customerList) {
     RentedCar rentedCar;
-    cout << "Input Rented Car =================================" << endl;
+    cout << "Input Rented Car =================================";
     cout << "Input id car: ";
     int idCar;
     cin >> idCar;
@@ -734,6 +714,7 @@ void inputRentedCars(RentedCarList &list, CarList carList, CustomerList customer
     cout << "Input number of rented car: ";
     int n;
     cin >> n;
+    cin.ignore();
     for (int i = 0; i < n; i++) {
         RentedCarNode *p;
         p = createRentedCarNode(inputRentedCar(carList, customerList, true));
@@ -827,4 +808,7 @@ int main() {
         }
     } while (choice != 0);
     return 0;
+
 }
+
+
