@@ -1,4 +1,4 @@
 3
-2 DucAn 22 0915246556 HaNoi
-3 MaiDuy 25 0915234343 HaGiang
-4 TuanDat 22 1234567898 HoaBinh
+1 DucAnh 20 1 1
+2 DucAn 22 2 2
+3 MaiDuy 23 3 3

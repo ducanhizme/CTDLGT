@@ -38,34 +38,10 @@ void menu() {
     cout << "6.Them xe cho thue" << endl;
     cout << "7.Them hop dong cho thue" << endl;
     cout << "8.Xoa hop dong" << endl;
-    cout << "9.Xoa xe" << endl;
-    cout << "10.Xoa khach hang" << endl;
-    cout << "11.Cap nhat xe" << endl;
-    cout << "12.Sap xep xe theo gia" << endl;
+    cout << "9.Sap xep xe theo gia thue" << endl;
     cout << "0.Exit" << endl;
 }
 
-string handleFileInput() {
-    char choice1;
-    cout << "Khong co danh sach nao ban co muon import du lieu khong (Y/N): " << endl;
-    cin >> choice1;
-    cin.ignore();
-    do {
-        if (choice1 == 'Y' || choice1 == 'y') {
-            cout << "Nhap file de import danh sach oto: (0.EXIT)";
-            string fileName;
-            getline(cin, fileName);
-            if (fileName == "0") {
-                break;
-            }
-            return fileName;
-        } else {
-            cin.ignore();
-            break;
-        }
-    } while (choice1 != 'N');
-    return "0";
-}
 
 //================== CUSTOMER =============================
 struct Customer {
@@ -116,6 +92,38 @@ void addCustomer(CustomerList &list, CustomerNode *p) {
         list.tail = p;
     }
 }
+
+void deleteCustomer(CustomerList &list, CustomerNode *node) {
+    if (node == list.head) {
+        list.head = node->next;
+        if (list.head != nullptr) {
+            list.head->prev = nullptr;
+        }
+        delete node;
+        return;
+    }
+
+    if (node->next == nullptr) {
+        node->prev->next = nullptr;
+        delete node;
+        return;
+    }
+
+    node->prev->next = node->next;
+    node->next->prev = node->prev;
+    delete node;
+}
+
+void filterFirstCustomerList(CustomerList &list) {
+    CustomerNode *current = list.head;
+    while (current != nullptr) {
+        if (current->data.id == NOT_FOUND_CODE) {
+            deleteCustomer(list,current);
+        }
+        current = current->next;
+    }
+}
+
 
 int customerListSize(CustomerNode *head) {
     int count = 0;
@@ -175,14 +183,16 @@ CustomerList readCustomersFromTextFile(const char *fileName) {
             CustomerNode *p = createCustomerNode(data);
             addCustomer(list, p);
         } else {
-
+            cout<<"Error:Cannot read customer file"<<endl;
         }
     }
-
     fclose(f);
-    cout << "Successfully read " << n << " customers from the file." << endl;
+    cout << "Successfully read customers from the file." << endl;
     return list;
 }
+
+
+
 
 Customer inputCustomer() {
     Customer customer;
@@ -216,6 +226,7 @@ void inputCustomers(CustomerList &list) {
         p = createCustomerNode(inputCustomer());
         addCustomer(list, p);
     }
+    filterFirstCustomerList(list);
     saveCustomersToTextFile(list, fileName);
 }
 
@@ -291,7 +302,6 @@ struct CarList {
 
 void showTitleCarTable();
 
-void notifyDataCarChanged(CarList list, char *name);
 
 void initCarList(CarList &list) {
     list.head = list.tail = nullptr;
@@ -336,6 +346,16 @@ void deleteCar(CarList &list, CarNode *node) {
     node->prev->next = node->next;
     node->next->prev = node->prev;
     delete node;
+}
+
+void filterFirstCarList(CarList &list) {
+    CarNode *current = list.head;
+    while (current != nullptr) {
+        if (current->data.id == NOT_FOUND_CODE) {
+            deleteCar(list,current);
+        }
+        current = current->next;
+    }
 }
 
 int carListSize(CarNode *head) {
@@ -408,7 +428,7 @@ CarList readCarsFromTextFile(const char *fileName) {
 
     fclose(f);
 
-    cout << "Successfully read " << n << " cars from the file." << endl;
+    cout << "Successfully read cars from the file." << endl;
     return list;
 }
 
@@ -479,6 +499,7 @@ void inputCars(CarList &list) {
         p = createCarNode(inputCar());
         addCar(list, p);
     }
+    filterFirstCarList(list);
     saveCars(list, fileName);
 }
 
@@ -493,6 +514,7 @@ void inputCars(string fileName) {
         p = createCarNode(inputCar());
         addCar(list, p);
     }
+    filterFirstCarList(list);
     saveCars(list, fileName.c_str());
 }
 
@@ -505,7 +527,7 @@ Car findCarByID(CarList list, int id) {
         }
         current = current->next;
     }
-    return Car{NOT_FOUND_CODE, "", 0, 0, false};
+    return Car{NOT_FOUND_CODE, "x", 0, 0, 0, false};
 }
 
 CarList findUnrentedCar(const string &fileName, bool status) {
@@ -532,10 +554,32 @@ void updateStatusCar(CarList list, bool status, int id, const char *fileName) {
     }
     saveCars(list, fileName);
 }
+
+void sortCars(const string& fileName){
+    CarList list = readCarsFromTextFile(fileName.c_str());
+    if (list.head == nullptr || list.head->next == nullptr) {
+        return;
+    }
+    bool swapped;
+    CarNode *lastNode = nullptr;
+
+    do {
+        swapped = false;
+        for (CarNode *current = list.head; current->next != lastNode; current = current->next) {
+            if (current->data.price > current->next->data.price) {
+                swap(current->data, current->next->data);
+                swapped = true;
+            }
+        }
+        lastNode = list.tail;
+    } while (swapped);
+    showCars(list);
+}
 //============================================================
 //================== RENTED CAR ================================
 
 struct RentedCar {
+    int id;
     Car car;
     Customer customer;
     string startDate;
@@ -598,6 +642,16 @@ void deleteRentedCar(RentedCarList &list, RentedCarNode *node) {
     delete node;
 }
 
+void filterFirstRentedCarList(RentedCarList &list) {
+    RentedCarNode *current = list.head;
+    while (current != nullptr) {
+        if (current->data.car.id == NOT_FOUND_CODE) {
+            deleteRentedCar(list,current);
+        }
+        current = current->next;
+    }
+}
+
 int rentedCarListSize(RentedCarNode *head) {
     int count = 0;
     RentedCarNode *current = head;
@@ -619,7 +673,8 @@ void saveRentedCars(RentedCarList list, const char *fileName) {
     fprintf(f, "%d\n", n);
 
     while (p != nullptr) {
-        fprintf(f, "%d %d %s %s %s %s\n",
+        fprintf(f, "%d %d %d %s %s %s %s\n",
+                p->data.id,
                 p->data.car.id,
                 p->data.customer.id,
                 p->data.startDate.c_str(),
@@ -644,36 +699,38 @@ RentedCarList readRentedCars(const char *fileName, CarList carList, CustomerList
 
     int n;
     if (fscanf(f, "%d", &n) != 1) {
-        cerr << "Error: Failed to read the number of rented cars." << endl;
         fclose(f);
         return list;
     }
 
     for (int i = 0; i < n; i++) {
         RentedCar rentedCar;
-        int carID, customerID;
+        int carID, customerID, id;
         char startDateStr[100], endDateStr[100];
         char nameCarStr[100], nameCustomerStr[100];
 
-        if (fscanf(f, "%d %d %s %s %s %s", &carID, &customerID, startDateStr, endDateStr, nameCarStr,
-                   nameCustomerStr) == 6) {
+        if (fscanf(f, "%d %d %d %s %s %s %s", &id, &carID, &customerID, startDateStr, endDateStr, nameCarStr,
+                   nameCustomerStr) == 7) {
+            rentedCar.id = id;
             rentedCar.car = findCarByID(carList, carID);
             rentedCar.customer = findCustomerByID(customerList, customerID);
             rentedCar.startDate = startDateStr;
             rentedCar.endDate = endDateStr;
             addRentedCar(list, createRentedCarNode(rentedCar));
         } else {
-            cerr << "Error: Failed to read rented car data." << endl;
+            cout << "Error: Failed to read rented car data." << endl;
         }
     }
     fclose(f);
-    cout << "Successfully read " << n << " rented cars from the file." << endl;
+    cout << "Successfully read rented cars from the file." << endl;
     return list;
 }
 
 RentedCar inputRentedCar(CarList carList, CustomerList customerList) {
     RentedCar rentedCar;
     cout << "Input Rented Car =================================";
+    cout << "Input id: ";
+    cin >> rentedCar.id;
     cout << "Input id car: ";
     int idCar;
     cin >> idCar;
@@ -689,13 +746,15 @@ RentedCar inputRentedCar(CarList carList, CustomerList customerList) {
     if (car.id != NOT_FOUND_CODE && customer.id != NOT_FOUND_CODE) {
         return rentedCar;
     } else {
-        cout << "Something went wrong !!!" << endl;
+        cout << "Cannot find car have id: "<<car.id << endl;
     }
 }
 
 RentedCar inputRentedCar(CarList &carList, CustomerList &customerList, bool save) {
     RentedCar rentedCar;
     cout << "Input Rented Car =================================" << endl;
+    cout << "Input id: ";
+    cin >> rentedCar.id;
     cout << "Input id car: ";
     int idCar;
     cin >> idCar;
@@ -704,9 +763,14 @@ RentedCar inputRentedCar(CarList &carList, CustomerList &customerList, bool save
     rentedCar.customer = inputCustomer();
     rentedCar.startDate = inputDate();
     rentedCar.endDate = inputDate();
-    if (save) {
-        addCustomer(customerList, createCustomerNode(rentedCar.customer));
-        saveCustomersToTextFile(customerList, CUSTOMER_DATA_STORAGE);
+    if (rentedCar.car.id != NOT_FOUND_CODE && !rentedCar.car.status) {
+        if (save) {
+            addCustomer(customerList, createCustomerNode(rentedCar.customer));
+            saveCustomersToTextFile(customerList, CUSTOMER_DATA_STORAGE);
+        }
+    } else {
+        cout << "Cannot create constract with car id: "<<rentedCar.car.id <<"Status: "<<rentedCar.car.status  << endl;
+        rentedCar.car = Car{NOT_FOUND_CODE, "x", 0, 0, 0, false};
     }
     return rentedCar;
 }
@@ -721,6 +785,7 @@ void inputRentedCars(RentedCarList &list, CarList carList, CustomerList customer
         p = createRentedCarNode(inputRentedCar(carList, customerList, true));
         addRentedCar(list, p);
     }
+    filterFirstRentedCarList(list);
     saveRentedCars(list, fileName.c_str());
 }
 
@@ -732,7 +797,8 @@ void inputRentedCars(const string &fileNameRentedCar, const string &fileNameCar,
 }
 
 void showTitleRentedCarTable() {
-    cout << setw(10) << "ID CAR" << " | "
+    cout << setw(10) << "ID" << " | "
+         << setw(10) << "ID CAR" << " | "
          << left << setw(10) << "ID CUSTOMER" << " | "
          << setw(15) << "Start date" << " | "
          << setw(15) << "End date" << " | "
@@ -741,7 +807,8 @@ void showTitleRentedCarTable() {
 }
 
 void showRentedCar(RentedCar rentedCar) {
-    cout << setw(10) << rentedCar.car.id << " | "
+    cout << setw(10) << rentedCar.id << " | "
+         << setw(10) << rentedCar.car.id << " | "
          << left << setw(11) << rentedCar.customer.id << " | "
          << setw(15) << rentedCar.startDate << " | "
          << setw(15) << rentedCar.endDate << " | "
@@ -765,6 +832,31 @@ void showRentedCars(const string &fileRentedName, const string &fileCarName, con
     RentedCarList list = readRentedCars(fileRentedName.c_str(), carList, customerList);
     showRentedCars(list);
 }
+
+RentedCarNode *findRentedCarByID(RentedCarList list,int id){
+    RentedCarNode *current = list.head;
+    while (current != nullptr) {
+        if (current->data.id == id) {
+            return current;
+        }
+        current = current->next;
+    }
+    return nullptr;
+}
+
+void deleteRentedCarByID(const string &fileRentedName, const string &fileCarName, const string &fileCustomerName){
+    CarList carList = readCarsFromTextFile(fileCarName.c_str());
+    CustomerList customerList = readCustomersFromTextFile(fileCustomerName.c_str());
+    RentedCarList list = readRentedCars(fileRentedName.c_str(), carList, customerList);
+    cout<<"Input id to delete contract: ";
+    int id;
+    cin >> id;
+    RentedCarNode *deleteRentedCarNode = findRentedCarByID(list,id);
+    updateStatusCar(carList, false,deleteRentedCarNode->data.id,fileCarName.c_str());
+    deleteRentedCar(list, deleteRentedCarNode);
+    saveRentedCars(list,fileRentedName.c_str());
+}
+
 
 //===============================================================================================================
 int main() {
@@ -800,6 +892,12 @@ int main() {
                 break;
             case 7:
                 inputRentedCars(CONTRACT_DATA_STORAGE, CARS_DATA_STORAGE, CUSTOMER_DATA_STORAGE);
+                break;
+            case 8:
+                deleteRentedCarByID(CONTRACT_DATA_STORAGE, CARS_DATA_STORAGE, CUSTOMER_DATA_STORAGE);
+                break;
+            case 9:
+                sortCars(CARS_DATA_STORAGE);
                 break;
             case 0:
                 cout << "Exiting the program. Goodbye!" << endl;

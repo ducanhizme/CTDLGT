@@ -1,6 +1,8 @@
-5
-1 Toyota 12 2018 2000000.00 Rented
-2 Civic 10 2010 1500000.00 Rented
-3 Mazada 15 2020 2300000.00 Unrented
-4 Posche 20 2020 0.00 Unrented
-5 Posche 20 2020 1200000.00 Rented
+7
+1 Toyota 20 2019 140.00 Unrented
+2 Chevrolet 19 2023 120.00 Rented
+3 Ford 18 2022 160.00 Rented
+4 Honda 17 2022 170.00 Unrented
+5 Hyundai 16 2019 130.00 Unrented
+6 Isuzu 15 2020 150.00 Unrented
+7 Suzuki 14 2010 110.00 Unrented
