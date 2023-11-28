@@ -215,10 +215,10 @@ void showCustomerTittleTable() {
 
 void showCustomer(Customer customer) {
 
-    cout << std::setw(5) << customer.id << " | "
+    cout << setw(5) << customer.id << " | "
          << left << setw(15) << customer.nameCustomer << " | "
-         << std::setw(5) << customer.age << " | "
-         << std::setw(15) << customer.phoneNumber << " | "
+         << setw(5) << customer.age << " | "
+         << setw(15) << customer.phoneNumber << " | "
          << customer.address << endl;
 }
 
@@ -375,10 +375,10 @@ CarList readCarsFromTextFile(const char *fileName) {
     for (int i = 0; i < n; i++) {
         Car data;
         char nameCarStr[100];
-        char statusStr[20]; // Assuming the status string won't exceed 20 characters
+        char statusStr[20];
         if (fscanf(f, "%d %s %d %d %f %s", &data.id, nameCarStr, &data.capacityFuel, &data.mfgDate, &data.price,
                    statusStr) == 6) {
-            data.nameCar = nameCarStr; // Convert the C-style string to a std::string
+            data.nameCar = nameCarStr;
             data.status = (strcmp(statusStr, "Rented") == 0);
             CarNode *p = createCarNode(data);
             addCar(list, p);
