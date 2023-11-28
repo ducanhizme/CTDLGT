@@ -1,0 +1,6 @@
+5
+1 Toyota 12 2018 2000000.00 Rented
+2 Civic 10 2010 1500000.00 Rented
+3 Mazada 15 2020 2300000.00 Unrented
+4 Posche 20 2020 0.00 Unrented
+5 Posche 20 2020 1200000.00 Rented

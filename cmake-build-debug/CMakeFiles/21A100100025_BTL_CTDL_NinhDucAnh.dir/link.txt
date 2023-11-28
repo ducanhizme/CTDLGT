@@ -1,0 +1,1 @@
+/usr/bin/c++ -g CMakeFiles/21A100100025_BTL_CTDL_NinhDucAnh.dir/21A100100025_NinhDucAnh_BTL_CTDL.cpp.o -o 21A100100025_BTL_CTDL_NinhDucAnh 
