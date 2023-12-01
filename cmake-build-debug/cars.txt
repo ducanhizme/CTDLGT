@@ -1,8 +1,8 @@
 7
-1 Toyota 20 2019 140.00 Unrented
-2 Chevrolet 19 2023 120.00 Rented
-3 Ford 18 2022 160.00 Rented
-4 Honda 17 2022 170.00 Unrented
-5 Hyundai 16 2019 130.00 Unrented
-6 Isuzu 15 2020 150.00 Unrented
-7 Suzuki 14 2010 110.00 Unrented
+1 Sedan 20 2023 300 Unrented 30
+2 Suv 15 2022 300 Rented 16
+3 Hatchback 13 2021 250 Rented 7
+4 Crossover 17 2017 200 Rented 4
+5 Coupe 18 2016 190 Rented 10
+6 Roadster 25 2020 400 Unrented 4
+7 Toyota 17 2019 150 Unrented 2

@@ -3,7 +3,10 @@
 
 CMakeFiles/21A100100025_BTL_CTDL_NinhDucAnh.dir/21A100100025_NinhDucAnh_BTL_CTDL.cpp.o: /home/ddanh/Copy/CTDLGT/21A100100025_NinhDucAnh_BTL_CTDL.cpp \
   /usr/include/stdc-predef.h \
-  /usr/include/c++/11/iostream \
+  /usr/include/c++/11/fstream \
+  /usr/include/c++/11/istream \
+  /usr/include/c++/11/ios \
+  /usr/include/c++/11/iosfwd \
   /usr/include/x86_64-linux-gnu/c++/11/bits/c++config.h \
   /usr/include/x86_64-linux-gnu/c++/11/bits/os_defines.h \
   /usr/include/features.h \
@@ -15,9 +18,6 @@ CMakeFiles/21A100100025_BTL_CTDL_NinhDucAnh.dir/21A100100025_NinhDucAnh_BTL_CTDL
   /usr/include/x86_64-linux-gnu/gnu/stubs.h \
   /usr/include/x86_64-linux-gnu/gnu/stubs-64.h \
   /usr/include/x86_64-linux-gnu/c++/11/bits/cpu_defines.h \
-  /usr/include/c++/11/ostream \
-  /usr/include/c++/11/ios \
-  /usr/include/c++/11/iosfwd \
   /usr/include/c++/11/bits/stringfwd.h \
   /usr/include/c++/11/bits/memoryfwd.h \
   /usr/include/c++/11/bits/postypes.h \
@@ -175,9 +175,14 @@ CMakeFiles/21A100100025_BTL_CTDL_NinhDucAnh.dir/21A100100025_NinhDucAnh_BTL_CTDL
   /usr/include/x86_64-linux-gnu/c++/11/bits/ctype_inline.h \
   /usr/include/c++/11/bits/locale_facets.tcc \
   /usr/include/c++/11/bits/basic_ios.tcc \
+  /usr/include/c++/11/ostream \
   /usr/include/c++/11/bits/ostream.tcc \
-  /usr/include/c++/11/istream \
   /usr/include/c++/11/bits/istream.tcc \
+  /usr/include/c++/11/bits/codecvt.h \
+  /usr/include/x86_64-linux-gnu/c++/11/bits/basic_file.h \
+  /usr/include/x86_64-linux-gnu/c++/11/bits/c++io.h \
+  /usr/include/c++/11/bits/fstream.tcc \
+  /usr/include/c++/11/iostream \
   /usr/include/c++/11/iomanip \
   /usr/include/c++/11/locale \
   /usr/include/c++/11/bits/locale_facets_nonio.h \
@@ -185,7 +190,6 @@ CMakeFiles/21A100100025_BTL_CTDL_NinhDucAnh.dir/21A100100025_NinhDucAnh_BTL_CTDL
   /usr/include/x86_64-linux-gnu/c++/11/bits/time_members.h \
   /usr/include/x86_64-linux-gnu/c++/11/bits/messages_members.h \
   /usr/include/libintl.h \
-  /usr/include/c++/11/bits/codecvt.h \
   /usr/include/c++/11/bits/locale_facets_nonio.tcc \
   /usr/include/c++/11/bits/locale_conv.h \
   /usr/include/c++/11/bits/unique_ptr.h \
@@ -229,7 +233,15 @@ CMakeFiles/21A100100025_BTL_CTDL_NinhDucAnh.dir/21A100100025_NinhDucAnh_BTL_CTDL
 
 /usr/include/c++/11/iomanip:
 
+/usr/include/x86_64-linux-gnu/c++/11/bits/c++io.h:
+
+/usr/include/x86_64-linux-gnu/c++/11/bits/basic_file.h:
+
 /usr/include/c++/11/bits/istream.tcc:
+
+/usr/include/c++/11/tuple:
+
+/usr/include/c++/11/ostream:
 
 /usr/include/x86_64-linux-gnu/c++/11/bits/ctype_base.h:
 
@@ -238,10 +250,6 @@ CMakeFiles/21A100100025_BTL_CTDL_NinhDucAnh.dir/21A100100025_NinhDucAnh_BTL_CTDL
 /usr/include/wctype.h:
 
 /usr/include/c++/11/cwctype:
-
-/usr/include/x86_64-linux-gnu/bits/endianness.h:
-
-/usr/include/x86_64-linux-gnu/bits/stdlib-float.h:
 
 /usr/include/x86_64-linux-gnu/bits/endian.h:
 
@@ -311,47 +319,29 @@ CMakeFiles/21A100100025_BTL_CTDL_NinhDucAnh.dir/21A100100025_NinhDucAnh_BTL_CTDL
 
 /usr/include/c++/11/bits/predefined_ops.h:
 
+/usr/include/c++/11/bits/fstream.tcc:
+
 /usr/include/x86_64-linux-gnu/c++/11/bits/gthr.h:
 
 /usr/include/c++/11/new:
 
 /usr/include/c++/11/bits/ptr_traits.h:
 
+/usr/include/x86_64-linux-gnu/bits/endianness.h:
+
+/usr/include/x86_64-linux-gnu/bits/stdlib-float.h:
+
 /usr/include/c++/11/bits/cxxabi_init_exception.h:
 
-/usr/include/c++/11/ext/alloc_traits.h:
-
-/usr/include/c++/11/tuple:
-
-/usr/include/c++/11/ostream:
-
-/usr/include/c++/11/bits/stl_iterator_base_types.h:
-
-/usr/include/c++/11/bits/exception_ptr.h:
-
-/usr/include/x86_64-linux-gnu/bits/long-double.h:
-
-/usr/include/c++/11/bits/exception.h:
-
-/usr/include/x86_64-linux-gnu/c++/11/bits/cpu_defines.h:
-
-/usr/include/x86_64-linux-gnu/c++/11/bits/c++locale.h:
-
-/usr/include/wchar.h:
-
-/usr/include/c++/11/bits/stringfwd.h:
-
-/usr/include/c++/11/exception:
-
 /usr/include/x86_64-linux-gnu/gnu/stubs-64.h:
-
-/usr/include/x86_64-linux-gnu/bits/types.h:
-
-/usr/include/c++/11/bits/basic_string.h:
 
 /usr/include/c++/11/sstream:
 
 /usr/include/c++/11/bits/locale_classes.h:
+
+/usr/include/c++/11/bits/exception_ptr.h:
+
+/usr/include/c++/11/bits/stl_iterator_base_types.h:
 
 /usr/include/x86_64-linux-gnu/bits/types/__sigset_t.h:
 
@@ -371,13 +361,39 @@ CMakeFiles/21A100100025_BTL_CTDL_NinhDucAnh.dir/21A100100025_NinhDucAnh_BTL_CTDL
 
 /usr/include/x86_64-linux-gnu/bits/timesize.h:
 
-/usr/include/x86_64-linux-gnu/bits/setjmp.h:
-
-/usr/include/c++/11/streambuf:
+/usr/include/c++/11/ext/alloc_traits.h:
 
 /usr/lib/gcc/x86_64-linux-gnu/11/include/stddef.h:
 
 /usr/include/x86_64-linux-gnu/c++/11/bits/os_defines.h:
+
+/usr/include/x86_64-linux-gnu/bits/long-double.h:
+
+/usr/include/c++/11/bits/exception.h:
+
+/usr/include/x86_64-linux-gnu/c++/11/bits/cpu_defines.h:
+
+/usr/include/x86_64-linux-gnu/c++/11/bits/c++locale.h:
+
+/usr/include/c++/11/bits/basic_string.h:
+
+/usr/include/x86_64-linux-gnu/bits/types.h:
+
+/usr/include/wchar.h:
+
+/usr/include/c++/11/bits/stringfwd.h:
+
+/usr/include/c++/11/exception:
+
+/usr/include/x86_64-linux-gnu/bits/setjmp.h:
+
+/usr/include/c++/11/streambuf:
+
+/usr/include/c++/11/fstream:
+
+/usr/include/string.h:
+
+/usr/include/c++/11/cstdint:
 
 /usr/include/c++/11/bits/stl_pair.h:
 
@@ -433,10 +449,6 @@ CMakeFiles/21A100100025_BTL_CTDL_NinhDucAnh.dir/21A100100025_NinhDucAnh_BTL_CTDL
 
 /usr/include/x86_64-linux-gnu/bits/atomic_wide_counter.h:
 
-/usr/include/string.h:
-
-/usr/include/c++/11/cstdint:
-
 /usr/include/x86_64-linux-gnu/bits/types/locale_t.h:
 
 /usr/include/x86_64-linux-gnu/bits/types/__locale_t.h:
@@ -481,9 +493,9 @@ CMakeFiles/21A100100025_BTL_CTDL_NinhDucAnh.dir/21A100100025_NinhDucAnh_BTL_CTDL
 
 /usr/include/c++/11/bits/alloc_traits.h:
 
-/usr/include/c++/11/bits/hash_bytes.h:
-
 /usr/include/c++/11/bits/stl_construct.h:
+
+/usr/include/c++/11/bits/hash_bytes.h:
 
 /usr/include/x86_64-linux-gnu/bits/types/FILE.h:
 

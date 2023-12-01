@@ -1,3 +1,5 @@
-2
-2 2 2 2/2/2 2/2/2 Chevrolet DucAn
-3 3 3 3/3/3 3/3/3 Ford MaiDuy
+4
+2 2 2 22/2/2022 25/2/2022 Suv MaiDuy
+3 3 3 23/3/2023 25/3/2023 Hatchback DucAnh
+4 4 4 24/4/2024 27/4/2024 Crossover DucAn
+5 5 5 25/5/2025 26/5/2025 Coupe MaiLinh

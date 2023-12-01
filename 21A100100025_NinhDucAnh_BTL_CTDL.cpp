@@ -43,6 +43,8 @@ void menu() {
     cout << "7.Them hop dong cho thue" << endl;
     cout << "8.Xoa hop dong" << endl;
     cout << "9.Sap xep xe theo gia thue" << endl;
+    cout << "10.Sap xep xe theo so luong cho ngoi" << endl;
+    cout << "11.Chinh sua so luong cho ngoi" << endl;
     cout << "0.Exit" << endl;
 }
 
@@ -188,7 +190,7 @@ CustomerList readCustomersFromTextFile(const char *fileName) {
         }
     }
     file.close();
-    std::cout << "Successfully read customers from the file." << std::endl;
+    cout << "Successfully read customers from the file." << std::endl;
     return list;
 }
 
@@ -289,6 +291,7 @@ struct Car {
     int mfgDate;
     float price;
     bool status;
+    int seatAmount;
 };
 
 struct CarNode {
@@ -376,12 +379,8 @@ bool isCarListEmpty(CarList list) {
     return false;
 }
 
-#include <iostream>
-#include <fstream>
-#include <stdexcept>
-
 void saveCars(CarList list, const char *fileName) {
-    std::ofstream file(fileName);
+    ofstream file(fileName);
     if (!file) {
         throw runtime_error("Error: Unable to open file for writing.");
     }
@@ -394,8 +393,9 @@ void saveCars(CarList list, const char *fileName) {
              << p->data.capacityFuel << " "
              << p->data.mfgDate << " "
              << p->data.price << " "
-             << (p->data.status ? "Rented" : "Unrented")
-             << std::endl;
+             << (p->data.status ? "Rented" : "Unrented")<<" "
+            << p->data.seatAmount
+             << endl;
         p = p->next;
     }
 
@@ -419,7 +419,7 @@ CarList readCarsFromTextFile(const char *fileName) {
         string statusStr;
         char nameCarCStr[100];
         char statusCStr[20];
-        if (file >> data.id >> nameCarCStr >> data.capacityFuel >> data.mfgDate >> data.price >> statusCStr) {
+        if (file >> data.id >> nameCarCStr >> data.capacityFuel >> data.mfgDate >> data.price >> statusCStr >> data.seatAmount) {
             nameCarStr = nameCarCStr;
             statusStr = statusCStr;
             data.nameCar = nameCarStr;
@@ -427,10 +427,9 @@ CarList readCarsFromTextFile(const char *fileName) {
             CarNode *p = createCarNode(data);
             addCar(list, p);
         } else {
-            cout<< "Failed to read car data.";
+            cout<< "Failed to read car data."<<endl;
         }
     }
-
     return list;
 }
 
@@ -449,6 +448,8 @@ Car inputCar() {
     cout << "Input price: ";
     cin >> car.price;
     car.status = false;
+    cout << "Input amount of seats: ";
+    cin >> car.seatAmount;
     cin.ignore();
     cout << "======================================" << endl;
     return car;
@@ -460,7 +461,8 @@ void showTitleCarTable() {
          << setw(10) << "MFG" << " | "
          << setw(10) << "Capacity(l)" << " | "
          << setw(10) << "Price(VND)" << " | "
-         << "Status" << endl;
+            << setw(10) << "Status" << " | "
+         << "Seats" << endl;
 }
 
 void showCar(Car car) {
@@ -470,7 +472,8 @@ void showCar(Car car) {
          << setw(10) << car.mfgDate << " | "
          << setw(10) << car.capacityFuel << " | "
          << setw(10) << car.price << " | "
-         << status << endl;
+            << setw(10) << status << " | "
+         << car.seatAmount << endl;
 }
 
 void showCars(CarList list) {
@@ -495,6 +498,7 @@ void inputCars(CarList &list) {
     cout << "Input number of car: ";
     int n;
     cin >> n;
+
     cin.ignore();
     for (int i = 0; i < n; i++) {
         CarNode *p;
@@ -557,7 +561,7 @@ void updateStatusCar(CarList list, bool status, int id, const char *fileName) {
     saveCars(list, fileName);
 }
 
-void sortCars(const string& fileName){
+void sortCars(string fileName){
     CarList list = readCarsFromTextFile(fileName.c_str());
     if (list.head == nullptr || list.head->next == nullptr) {
         return;
@@ -576,6 +580,46 @@ void sortCars(const string& fileName){
         lastNode = list.tail;
     } while (swapped);
     showCars(list);
+}
+
+void sortSeatCar(string fileName){
+    CarList list = readCarsFromTextFile(fileName.c_str());
+    if (list.head == nullptr || list.head->next == nullptr) {
+        return;
+    }
+    bool swapped;
+    CarNode *lastNode = nullptr;
+    do {
+        swapped = false;
+        for (CarNode *current = list.head; current->next != lastNode; current = current->next) {
+            if (current->data.seatAmount > current->next->data.seatAmount) {
+                swap(current->data, current->next->data);
+                swapped = true;
+            }
+        }
+        lastNode = list.tail;
+    } while (swapped);
+    showCars(list);
+}
+
+void editSeatCar(string fileName){
+    CarList list = readCarsFromTextFile(fileName.c_str());
+    bool check= false;
+    cout <<"Input id to edit seatss: "<<endl;
+    int id;
+    cin >>id;
+    CarNode *current = list.head;
+    while (current != nullptr) {
+        if (current->data.id == id) {
+            cout <<"Input new seat data: "<<endl;
+            cin >> current->data.seatAmount;
+            check = true;
+        }
+        current = current->next;
+    }
+   string logger = check?"Successfully Edit" : "Error:Cannot to edit";
+    cout <<logger<<endl;
+    saveCars(list,fileName.c_str());
 }
 //============================================================
 //================== RENTED CAR ================================
@@ -853,6 +897,7 @@ void deleteRentedCarByID(const string &fileRentedName, const string &fileCarName
     int id;
     cin >> id;
     RentedCarNode *deleteRentedCarNode = findRentedCarByID(list,id);
+    cout<<deleteRentedCarNode->data.id<<"Hereee"<<endl;
     updateStatusCar(carList, false,deleteRentedCarNode->data.id,fileCarName.c_str());
     deleteRentedCar(list, deleteRentedCarNode);
     saveRentedCars(list,fileRentedName.c_str());
@@ -894,6 +939,11 @@ int main() {
             case 9:
                 sortCars(CARS_DATA_STORAGE);
                 break;
+            case 10:
+                sortSeatCar(CARS_DATA_STORAGE);
+                break;
+            case 11:
+                editSeatCar(CARS_DATA_STORAGE);
             case 0:
                 cout << "Exiting the program. Goodbye!" << endl;
                 break;
